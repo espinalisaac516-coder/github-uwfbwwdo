@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { BrowserMultiFormatReader, BarcodeFormat } from "@zxing/browser";
+import { BrowserMultiFormatReader } from "@zxing/browser";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Maximize } from "lucide-react";
@@ -25,18 +25,23 @@ const IDScanner = () => {
     const startScanner = async () => {
       try {
         const devices = await BrowserMultiFormatReader.listVideoInputDevices();
+
         const backCamera =
-          devices.find((d) =>
-            d.label.toLowerCase().includes("back")
-          ) || devices[0];
+          devices.find((d) => d.label.toLowerCase().includes("back")) ||
+          devices[0];
 
         await reader.decodeFromVideoDevice(
           backCamera.deviceId,
           videoRef.current!,
-          (result, err) => {
+          (result) => {
             if (result) {
               const text = result.getText();
+
               console.log("SCANNED:", text);
+
+              // 👇 TEMP DEBUG so you can copy raw barcode data
+              alert(text);
+
               verifyAge(text);
             }
           }
@@ -55,6 +60,8 @@ const IDScanner = () => {
   }, []);
 
   const verifyAge = (data: string) => {
+
+    // Try to locate DOB field (DBB = AAMVA DOB tag)
     const dobIndex = data.indexOf("DBB");
 
     if (dobIndex !== -1) {
@@ -68,6 +75,7 @@ const IDScanner = () => {
       const today = new Date();
 
       let age = today.getFullYear() - birthDate.getFullYear();
+
       if (
         today.getMonth() < birthDate.getMonth() ||
         (today.getMonth() === birthDate.getMonth() &&
@@ -90,6 +98,7 @@ const IDScanner = () => {
   return (
     <div className="min-h-screen bg-black text-white p-4 flex flex-col items-center">
       <div className="w-full max-w-md space-y-4">
+
         <div className="flex justify-between items-center pt-2">
           <Button
             variant="ghost"
@@ -98,6 +107,7 @@ const IDScanner = () => {
           >
             Exit Scanner
           </Button>
+
           <div className="bg-green-600 px-3 py-1 rounded text-[10px] font-bold animate-pulse">
             ZXING MODE
           </div>
