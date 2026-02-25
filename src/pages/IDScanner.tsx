@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { Html5Qrcode, Html5QrcodeSupportedFormats } from "html5-qrcode";
+import React, { useEffect, useRef, useState } from "react";
+import { BrowserMultiFormatReader, BarcodeFormat } from "@zxing/browser";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Maximize } from "lucide-react";
@@ -7,45 +7,50 @@ import { useNavigate } from "react-router-dom";
 
 const IDScanner = () => {
   const navigate = useNavigate();
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const codeReader = useRef<BrowserMultiFormatReader | null>(null);
+
   const [ageStatus, setAgeStatus] = useState<{
     msg: string;
-    type: 'neutral' | 'success' | 'error' | 'warning';
+    type: "neutral" | "success" | "error" | "warning";
   }>({
     msg: "Center the thick barcode",
-    type: 'neutral'
+    type: "neutral",
   });
 
-  const scannerRef = useRef<Html5Qrcode | null>(null);
-
   useEffect(() => {
-    const html5QrCode = new Html5Qrcode("reader");
-    scannerRef.current = html5QrCode;
+    const reader = new BrowserMultiFormatReader();
+    codeReader.current = reader;
 
-    const config = {
-      fps: 10, // Lower FPS = better PDF417 detection
-      qrbox: { width: 400, height: 120 }, // Wide + short for NJ barcode
-      formatsToSupport: [Html5QrcodeSupportedFormats.PDF_417]
+    const startScanner = async () => {
+      try {
+        const devices = await BrowserMultiFormatReader.listVideoInputDevices();
+        const backCamera =
+          devices.find((d) =>
+            d.label.toLowerCase().includes("back")
+          ) || devices[0];
+
+        await reader.decodeFromVideoDevice(
+          backCamera.deviceId,
+          videoRef.current!,
+          (result, err) => {
+            if (result) {
+              const text = result.getText();
+              console.log("SCANNED:", text);
+              verifyAge(text);
+            }
+          }
+        );
+      } catch (err) {
+        console.error("Camera error:", err);
+        setAgeStatus({ msg: "Camera Error", type: "error" });
+      }
     };
 
-    html5QrCode.start(
-      { facingMode: { exact: "environment" } },
-      config,
-      (decodedText) => {
-        console.log("SCANNED DATA:", decodedText);
-        verifyAge(decodedText);
-      },
-      () => {}
-    ).catch((err) => {
-      console.error("Camera start error:", err);
-      setAgeStatus({ msg: "Camera Error - Refresh Page", type: 'error' });
-    });
+    startScanner();
 
     return () => {
-      if (scannerRef.current) {
-        scannerRef.current.stop()
-          .then(() => scannerRef.current?.clear())
-          .catch(() => {});
-      }
+      reader.reset();
     };
   }, []);
 
@@ -72,55 +77,48 @@ const IDScanner = () => {
       }
 
       if (age >= 21) {
-        setAgeStatus({ msg: `VERIFIED: ${age}`, type: 'success' });
-        scannerRef.current?.stop();
+        setAgeStatus({ msg: `VERIFIED: ${age}`, type: "success" });
+        codeReader.current?.reset();
       } else {
-        setAgeStatus({ msg: `REJECTED: ${age}`, type: 'error' });
+        setAgeStatus({ msg: `REJECTED: ${age}`, type: "error" });
       }
     } else {
-      setAgeStatus({ msg: "Invalid ID Format", type: 'warning' });
+      setAgeStatus({ msg: "Invalid ID Format", type: "warning" });
     }
   };
 
   return (
     <div className="min-h-screen bg-black text-white p-4 flex flex-col items-center">
       <div className="w-full max-w-md space-y-4">
-
         <div className="flex justify-between items-center pt-2">
           <Button
             variant="ghost"
-            onClick={() => navigate('/dashboard')}
+            onClick={() => navigate("/dashboard")}
             className="text-zinc-500 underline"
           >
             Exit Scanner
           </Button>
           <div className="bg-green-600 px-3 py-1 rounded text-[10px] font-bold animate-pulse">
-            HIGH-SPEED MODE
+            ZXING MODE
           </div>
         </div>
 
-        {/* Scanner View */}
         <Card className="overflow-hidden bg-zinc-950 border-zinc-800 relative aspect-video">
-          <div id="reader" className="w-full h-full"></div>
-
-          {/* Overlay */}
-          <div className="absolute inset-0 border-2 border-green-500/30 m-8 rounded-lg pointer-events-none">
-            <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-green-500"></div>
-            <div className="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-green-500"></div>
-            <div className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-green-500"></div>
-            <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-green-500"></div>
-          </div>
+          <video
+            ref={videoRef}
+            className="w-full h-full object-cover"
+          />
         </Card>
 
         <div
           className={`p-8 rounded-2xl border-4 text-center transition-all ${
-            ageStatus.type === 'success'
-              ? 'bg-green-600 border-green-300 shadow-[0_0_30px_rgba(34,197,94,0.5)]'
-              : ageStatus.type === 'error'
-              ? 'bg-red-600 border-red-300'
-              : ageStatus.type === 'warning'
-              ? 'bg-yellow-600 border-yellow-300'
-              : 'bg-zinc-900 border-zinc-800 text-zinc-400'
+            ageStatus.type === "success"
+              ? "bg-green-600 border-green-300 shadow-[0_0_30px_rgba(34,197,94,0.5)]"
+              : ageStatus.type === "error"
+              ? "bg-red-600 border-red-300"
+              : ageStatus.type === "warning"
+              ? "bg-yellow-600 border-yellow-300"
+              : "bg-zinc-900 border-zinc-800 text-zinc-400"
           }`}
         >
           <p className="text-2xl font-black italic tracking-tight">
