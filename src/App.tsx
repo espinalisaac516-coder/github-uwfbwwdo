@@ -5,9 +5,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import ProtectedRoute from "@/components/ProtectedRoute";
-import { AuthProvider } from "@/context/AuthContext"; // ✅ LEVEL 3 ADDED
+import { AuthProvider } from "@/context/AuthContext";
 
-// Page Imports - Exact Case Matching
+// Page Imports
 import Index from "./pages/Index";
 import IDScanner from "./pages/IDScanner"; 
 import DriverSignup from "./pages/DriverSignup";
@@ -15,29 +15,32 @@ import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import DispensaryMenu from "./pages/DispensaryMenu"; 
 import Dispensaries from "./pages/Dispensaries";
+import Checkout from "./pages/Checkout"; // ✅ NEW
+// (we will add Orders page later)
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <AuthProvider> {/* ✅ LEVEL 3 WRAP START */}
+    <AuthProvider>
       <TooltipProvider>
         <Toaster />
         <Sonner />
+
         <BrowserRouter>
           <Routes>
 
-            {/* Main Home Page */}
+            {/* Home */}
             <Route path="/" element={<Index />} />
 
-            {/* ID Scanner (Hidden Route) */}
+            {/* ID Scanner */}
             <Route path="/id-scan" element={<IDScanner />} />
 
             {/* Driver & Auth */}
             <Route path="/driver-signup" element={<DriverSignup />} />
             <Route path="/auth" element={<Auth />} />
 
-            {/* Protected: Customer Only */}
+            {/* Customer Protected Routes */}
             <Route
               path="/dispensaries"
               element={
@@ -47,7 +50,6 @@ const App = () => (
               }
             />
 
-            {/* Menu for Specific Dispensary (also protected as customer area) */}
             <Route
               path="/dispensary/:id"
               element={
@@ -57,13 +59,24 @@ const App = () => (
               }
             />
 
-            {/* Catch-all 404 */}
+            {/* ✅ CHECKOUT (ORDER SYSTEM STEP 1) */}
+            <Route
+              path="/checkout"
+              element={
+                <ProtectedRoute allowedRole="customer">
+                  <Checkout />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* 404 */}
             <Route path="*" element={<NotFound />} />
 
           </Routes>
         </BrowserRouter>
+
       </TooltipProvider>
-    </AuthProvider> {/* ✅ LEVEL 3 WRAP END */}
+    </AuthProvider>
   </QueryClientProvider>
 );
 
