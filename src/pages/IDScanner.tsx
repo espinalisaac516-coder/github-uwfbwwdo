@@ -1,8 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { BrowserMultiFormatReader } from "@zxing/browser";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Maximize } from "lucide-react";
+import { DecodeHintType, BarcodeFormat } from "@zxing/library";
 import { useNavigate } from "react-router-dom";
 
 const IDScanner = () => {
@@ -14,12 +12,19 @@ const IDScanner = () => {
     msg: string;
     type: "neutral" | "success" | "error" | "warning";
   }>({
-    msg: "Center the thick barcode",
+    msg: "Align NJ license barcode",
     type: "neutral",
   });
 
   useEffect(() => {
-    const reader = new BrowserMultiFormatReader();
+
+    // 🔥 FORCE DMV MODE (PDF417 ONLY)
+    const hints = new Map();
+    hints.set(DecodeHintType.POSSIBLE_FORMATS, [
+      BarcodeFormat.PDF_417
+    ]);
+
+    const reader = new BrowserMultiFormatReader(hints);
     codeReader.current = reader;
 
     const startScanner = async () => {
@@ -27,7 +32,7 @@ const IDScanner = () => {
         const devices = await BrowserMultiFormatReader.listVideoInputDevices();
 
         const backCamera =
-          devices.find((d) => d.label.toLowerCase().includes("back")) ||
+          devices.find(d => d.label.toLowerCase().includes("back")) ||
           devices[0];
 
         await reader.decodeFromVideoDevice(
@@ -36,16 +41,11 @@ const IDScanner = () => {
           (result) => {
             if (result) {
               const text = result.getText();
-
-              console.log("SCANNED:", text);
-
-              // 👇 TEMP DEBUG so you can copy raw barcode data
-              alert(text);
-
               verifyAge(text);
             }
           }
         );
+
       } catch (err) {
         console.error("Camera error:", err);
         setAgeStatus({ msg: "Camera Error", type: "error" });
@@ -57,19 +57,21 @@ const IDScanner = () => {
     return () => {
       reader.reset();
     };
+
   }, []);
 
+  // 🔥 NJ AAMVA AGE CHECK
   const verifyAge = (data: string) => {
 
-    // Try to locate DOB field (DBB = AAMVA DOB tag)
     const dobIndex = data.indexOf("DBB");
 
     if (dobIndex !== -1) {
+
       const dobString = data.substring(dobIndex + 3, dobIndex + 11);
 
-      const year = parseInt(dobString.substring(0, 4));
-      const month = parseInt(dobString.substring(4, 6)) - 1;
-      const day = parseInt(dobString.substring(6, 8));
+      const year = parseInt(dobString.substring(0,4));
+      const month = parseInt(dobString.substring(4,6)) - 1;
+      const day = parseInt(dobString.substring(6,8));
 
       const birthDate = new Date(year, month, day);
       const today = new Date();
@@ -79,74 +81,65 @@ const IDScanner = () => {
       if (
         today.getMonth() < birthDate.getMonth() ||
         (today.getMonth() === birthDate.getMonth() &&
-          today.getDate() < birthDate.getDate())
+        today.getDate() < birthDate.getDate())
       ) {
         age--;
       }
 
       if (age >= 21) {
-        setAgeStatus({ msg: `VERIFIED: ${age}`, type: "success" });
+        setAgeStatus({ msg: `VERIFIED AGE ${age}`, type: "success" });
         codeReader.current?.reset();
       } else {
-        setAgeStatus({ msg: `REJECTED: ${age}`, type: "error" });
+        setAgeStatus({ msg: `UNDERAGE ${age}`, type: "error" });
       }
+
     } else {
-      setAgeStatus({ msg: "Invalid ID Format", type: "warning" });
+      setAgeStatus({ msg: "Invalid NJ License", type: "warning" });
     }
   };
 
   return (
-    <div className="min-h-screen bg-black text-white p-4 flex flex-col items-center">
-      <div className="w-full max-w-md space-y-4">
+    <div className="fixed inset-0 bg-black text-white">
 
-        <div className="flex justify-between items-center pt-2">
-          <Button
-            variant="ghost"
-            onClick={() => navigate("/dashboard")}
-            className="text-zinc-500 underline"
-          >
-            Exit Scanner
-          </Button>
+      {/* FULLSCREEN CAMERA */}
+      <video
+        ref={videoRef}
+        className="absolute inset-0 w-full h-full object-cover"
+      />
 
-          <div className="bg-green-600 px-3 py-1 rounded text-[10px] font-bold animate-pulse">
-            ZXING MODE
-          </div>
+      {/* DARK OVERLAY */}
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" />
+
+      {/* SCANNER FRAME */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <div className="relative w-[85%] h-[25%] border-2 border-green-400 rounded-xl">
+
+          {/* Corner brackets */}
+          <div className="absolute top-0 left-0 w-6 h-6 border-l-4 border-t-4 border-green-400"/>
+          <div className="absolute top-0 right-0 w-6 h-6 border-r-4 border-t-4 border-green-400"/>
+          <div className="absolute bottom-0 left-0 w-6 h-6 border-l-4 border-b-4 border-green-400"/>
+          <div className="absolute bottom-0 right-0 w-6 h-6 border-r-4 border-b-4 border-green-400"/>
+
+          {/* SCAN LINE */}
+          <div className="absolute w-full h-[2px] bg-green-400 animate-pulse top-1/2"/>
         </div>
-
-        <Card className="overflow-hidden bg-zinc-950 border-zinc-800 relative aspect-video">
-          <video
-            ref={videoRef}
-            className="w-full h-full object-cover"
-          />
-        </Card>
-
-        <div
-          className={`p-8 rounded-2xl border-4 text-center transition-all ${
-            ageStatus.type === "success"
-              ? "bg-green-600 border-green-300 shadow-[0_0_30px_rgba(34,197,94,0.5)]"
-              : ageStatus.type === "error"
-              ? "bg-red-600 border-red-300"
-              : ageStatus.type === "warning"
-              ? "bg-yellow-600 border-yellow-300"
-              : "bg-zinc-900 border-zinc-800 text-zinc-400"
-          }`}
-        >
-          <p className="text-2xl font-black italic tracking-tight">
-            {ageStatus.msg}
-          </p>
-        </div>
-
-        <Button
-          onClick={() => window.location.reload()}
-          className="w-full py-12 bg-white text-black hover:bg-zinc-200 rounded-3xl font-black text-xl shadow-2xl"
-        >
-          <Maximize className="mr-3 h-6 w-6" /> TAP TO RE-FOCUS
-        </Button>
-
-        <p className="text-center text-[10px] text-zinc-700 font-bold uppercase tracking-[0.2em]">
-          Plainfield Compliance // Driver Bridge
-        </p>
       </div>
+
+      {/* STATUS DISPLAY */}
+      <div className="absolute bottom-16 left-0 right-0 text-center">
+        <div className="inline-block px-6 py-3 bg-black/70 backdrop-blur rounded-full text-lg font-bold">
+          {ageStatus.msg}
+        </div>
+      </div>
+
+      {/* EXIT BUTTON */}
+      <button
+        onClick={() => navigate("/dashboard")}
+        className="absolute top-6 left-6 bg-black/60 px-4 py-2 rounded-full"
+      >
+        Exit
+      </button>
+
     </div>
   );
 };
