@@ -7,6 +7,7 @@ import CategoryBar from "@/components/CategoryBar";
 import { ArrowLeft, Clock, MapPin, Store } from "lucide-react";
 
 export default function DispensaryMenu() {
+
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -16,10 +17,14 @@ export default function DispensaryMenu() {
   const [category, setCategory] = useState("All");
 
   useEffect(() => {
+
     async function load() {
+
       setLoading(true);
 
       try {
+
+        // 🔥 Fetch dispensary
         const { data: disp, error: dispError } = await supabase
           .from("dispensaries")
           .select("*")
@@ -33,17 +38,18 @@ export default function DispensaryMenu() {
         }
 
         if (!disp) {
+          console.warn("No dispensary found");
           setLoading(false);
           return;
         }
 
         setDispensary(disp as DbDispensary);
 
+        // 🔥 Fetch products (FIXED)
         const { data: prods, error: prodError } = await supabase
           .from("products")
           .select("*")
           .eq("dispensary_id", disp.id)
-          .eq("is_available", true)
           .order("created_at", { ascending: false });
 
         if (prodError) {
@@ -51,14 +57,19 @@ export default function DispensaryMenu() {
         }
 
         setProducts((prods as DbProduct[]) || []);
+
       } catch (err) {
+
         console.error("Unexpected load error:", err);
+
       }
 
       setLoading(false);
+
     }
 
     load();
+
   }, [id]);
 
   if (loading) {
@@ -93,6 +104,7 @@ export default function DispensaryMenu() {
 
   return (
     <div className="min-h-screen pt-20 pb-16 bg-white">
+
       <div className="relative h-48 overflow-hidden bg-slate-900">
         {dispensary.image_url ? (
           <img
@@ -107,6 +119,7 @@ export default function DispensaryMenu() {
       </div>
 
       <div className="container mx-auto px-4 -mt-16 relative z-10">
+
         <button
           onClick={() => navigate("/")}
           className="inline-flex items-center gap-1 text-sm font-bold text-slate-600 hover:text-[#00A67E] transition-colors mb-4 bg-white/80 backdrop-blur-sm px-3 py-1 rounded-full shadow-sm"
@@ -116,6 +129,7 @@ export default function DispensaryMenu() {
         </button>
 
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+
           <div>
             <h1 className="text-4xl font-black text-[#0F172A] uppercase tracking-tighter">
               {dispensary.name}
@@ -139,17 +153,12 @@ export default function DispensaryMenu() {
           </div>
 
           <div className="flex items-center gap-2 bg-white px-4 py-2 rounded-xl shadow-sm border border-slate-100 w-fit">
-            <div
-              className={`h-2 w-2 rounded-full ${
-                dispensary.is_open
-                  ? "bg-[#00A67E] animate-pulse"
-                  : "bg-red-500"
-              }`}
-            />
+            <div className={`h-2 w-2 rounded-full ${dispensary.is_open ? "bg-[#00A67E] animate-pulse" : "bg-red-500"}`} />
             <span className="text-sm font-bold uppercase tracking-widest text-slate-700">
               {dispensary.is_open ? "Open Now" : "Closed"}
             </span>
           </div>
+
         </div>
 
         <CategoryBar selected={category} onSelect={setCategory} />
@@ -167,6 +176,7 @@ export default function DispensaryMenu() {
             </p>
           </div>
         )}
+
       </div>
     </div>
   );
