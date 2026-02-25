@@ -7,8 +7,10 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { AuthProvider } from "@/context/AuthContext";
-import { CartProvider } from "@/lib/cart-context";   // ✅ CART PROVIDER
-import CartDrawer from "@/components/CartDrawer";   // ✅ GLOBAL CART
+import { CartProvider } from "@/lib/cart-context";
+
+import CartDrawer from "@/components/CartDrawer";
+import FloatingCart from "@/components/FloatingCart"; // 🔥 PRO CART BUTTON
 
 // Pages
 import Index from "./pages/Index";
@@ -32,8 +34,11 @@ const App = () => (
 
           <BrowserRouter>
 
-            {/* 🔥 GLOBAL CART (visible on all pages) */}
+            {/* 🔥 GLOBAL CART DRAWER */}
             <CartDrawer />
+
+            {/* 🔥 FLOATING PRO CART BUTTON */}
+            <FloatingCart />
 
             <Routes>
 
