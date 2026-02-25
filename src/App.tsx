@@ -1,13 +1,16 @@
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { AuthProvider } from "@/context/AuthContext";
-import { CartProvider } from "@/lib/cart-context"; // ✅ FIX
+import { CartProvider } from "@/lib/cart-context";   // ✅ CART PROVIDER
+import CartDrawer from "@/components/CartDrawer";   // ✅ GLOBAL CART
 
+// Pages
 import Index from "./pages/Index";
 import IDScanner from "./pages/IDScanner";
 import DriverSignup from "./pages/DriverSignup";
@@ -15,28 +18,38 @@ import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import DispensaryMenu from "./pages/DispensaryMenu";
 import Dispensaries from "./pages/Dispensaries";
-import Checkout from "./pages/Checkout";
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <CartProvider> {/* ✅ FIX ADDED HERE */}
+      <CartProvider> {/* 🔥 REQUIRED FOR useCart */}
+
         <TooltipProvider>
           <Toaster />
           <Sonner />
 
           <BrowserRouter>
+
+            {/* 🔥 GLOBAL CART (visible on all pages) */}
+            <CartDrawer />
+
             <Routes>
 
+              {/* Home */}
               <Route path="/" element={<Index />} />
 
+              {/* ID Scanner */}
               <Route path="/id-scan" element={<IDScanner />} />
 
+              {/* Driver */}
               <Route path="/driver-signup" element={<DriverSignup />} />
+
+              {/* Auth */}
               <Route path="/auth" element={<Auth />} />
 
+              {/* Protected Customer Area */}
               <Route
                 path="/dispensaries"
                 element={
@@ -46,6 +59,7 @@ const App = () => (
                 }
               />
 
+              {/* Dispensary Menu */}
               <Route
                 path="/dispensary/:id"
                 element={
@@ -55,22 +69,16 @@ const App = () => (
                 }
               />
 
-              <Route
-                path="/checkout"
-                element={
-                  <ProtectedRoute allowedRole="customer">
-                    <Checkout />
-                  </ProtectedRoute>
-                }
-              />
-
+              {/* 404 */}
               <Route path="*" element={<NotFound />} />
 
             </Routes>
+
           </BrowserRouter>
 
         </TooltipProvider>
-      </CartProvider> {/* ✅ FIX END */}
+
+      </CartProvider>
     </AuthProvider>
   </QueryClientProvider>
 );
