@@ -3,10 +3,11 @@ import { useCart } from "@/lib/cart-context";
 import { Minus, Plus, Trash2, ShoppingBag } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function CartDrawer() {
 
-  const { items, isOpen, setIsOpen, total, updateQuantity, removeItem } = useCart();
+  const { items, isOpen, setIsOpen, total, updateQuantity, removeItem, clearCart } = useCart();
 
   const navigate = useNavigate();
 
@@ -14,9 +15,56 @@ export default function CartDrawer() {
   const tax = total * 0.0662;
   const finalTotal = total + deliveryFee + tax;
 
-  const handleCheckout = () => {
-    setIsOpen(false);
-    navigate("/checkout");
+  const handleCheckout = async () => {
+
+    const { data: userData } = await supabase.auth.getUser();
+    const user = userData?.user;
+
+    if (!user) {
+      navigate("/auth");
+      return;
+    }
+
+    try {
+
+      // 🔥 Create order
+      const { data: order, error } = await supabase
+        .from("orders")
+        .insert({
+          user_id: user.id,
+          total: finalTotal,
+          status: "pending"
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      // 🔥 Insert order items
+      const itemsPayload = items.map(i => ({
+        order_id: order.id,
+        product_id: i.product.id,
+        quantity: i.quantity,
+        price: i.product.price
+      }));
+
+      const { error: itemsError } = await supabase
+        .from("order_items")
+        .insert(itemsPayload);
+
+      if (itemsError) throw itemsError;
+
+      // 🔥 Clear cart + close drawer
+      clearCart();
+      setIsOpen(false);
+
+      // 🔥 Go to confirmation page
+      navigate(`/order-confirmed/${order.id}`);
+
+    } catch (err) {
+      console.error("Checkout error:", err);
+      alert("Order failed. Please try again.");
+    }
   };
 
   return (
@@ -35,7 +83,6 @@ export default function CartDrawer() {
           </div>
         ) : (
           <>
-            {/* CART ITEMS */}
             <div className="flex-1 overflow-y-auto space-y-3 mt-4 pr-1">
               <AnimatePresence>
                 {items.map((item) => (
@@ -47,7 +94,6 @@ export default function CartDrawer() {
                     exit={{ opacity: 0, x: -20 }}
                     className="glass-card p-3 flex gap-3"
                   >
-
                     {item.product.image_url ? (
                       <img
                         src={item.product.image_url}
@@ -70,7 +116,6 @@ export default function CartDrawer() {
                     </div>
 
                     <div className="flex flex-col items-end justify-between">
-
                       <button
                         onClick={() => removeItem(item.product.id)}
                         className="text-muted-foreground hover:text-destructive transition-colors"
@@ -97,7 +142,6 @@ export default function CartDrawer() {
                           <Plus className="h-3 w-3" />
                         </button>
                       </div>
-
                     </div>
 
                   </motion.div>
@@ -105,7 +149,6 @@ export default function CartDrawer() {
               </AnimatePresence>
             </div>
 
-            {/* TOTAL + CHECKOUT */}
             <div className="border-t border-border/40 pt-4 space-y-3 mt-4">
 
               <div className="flex justify-between text-sm">
@@ -130,12 +173,11 @@ export default function CartDrawer() {
                 </span>
               </div>
 
-              {/* 🔥 CHECKOUT BUTTON */}
               <button
                 onClick={handleCheckout}
                 className="w-full py-3 rounded-xl btn-gradient font-display font-semibold text-primary-foreground hover:opacity-90 transition-opacity"
               >
-                Checkout
+                Place Order
               </button>
 
             </div>
