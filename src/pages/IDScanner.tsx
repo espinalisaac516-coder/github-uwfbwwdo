@@ -14,6 +14,8 @@ const IDScanner = () => {
     type: "neutral"
   });
 
+  const [successFlash, setSuccessFlash] = useState(false);
+
   useEffect(() => {
 
     const hints = new Map();
@@ -40,7 +42,7 @@ const IDScanner = () => {
         video.srcObject = stream;
         await video.play();
 
-        // 🔥 ENABLE CONTINUOUS AUTOFOCUS IF SUPPORTED
+        // 🔥 Attempt continuous autofocus
         const track = stream.getVideoTracks()[0];
         const capabilities = track.getCapabilities?.();
 
@@ -54,9 +56,6 @@ const IDScanner = () => {
           video,
           (result) => {
             if (result) {
-
-              navigator.vibrate?.(100); // 🔥 vibration feedback
-
               verifyAge(result.getText());
             }
           }
@@ -105,6 +104,11 @@ const IDScanner = () => {
       if (age >= 21) {
 
         setAgeStatus({ msg:`VERIFIED AGE ${age}`, type:"success" });
+
+        // 🔥 iPhone-friendly success animation
+        setSuccessFlash(true);
+        setTimeout(()=> setSuccessFlash(false), 400);
+
         codeReader.current?.reset();
 
       } else {
@@ -121,6 +125,7 @@ const IDScanner = () => {
 
     <div className="fixed inset-0 bg-black text-white">
 
+      {/* CAMERA */}
       <video
         ref={videoRef}
         className="absolute inset-0 w-full h-full object-cover"
@@ -128,10 +133,15 @@ const IDScanner = () => {
         playsInline
       />
 
-      {/* overlay */}
+      {/* SUCCESS FLASH */}
+      {successFlash && (
+        <div className="absolute inset-0 bg-green-400/30 animate-pulse pointer-events-none"/>
+      )}
+
+      {/* DARK OVERLAY */}
       <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px]" />
 
-      {/* scan frame */}
+      {/* SCANNER FRAME */}
       <div className="absolute inset-0 flex items-center justify-center">
 
         <div className="relative w-[85%] h-[25%] border-2 border-green-400 rounded-xl">
@@ -141,14 +151,14 @@ const IDScanner = () => {
           <div className="absolute bottom-0 left-0 w-6 h-6 border-l-4 border-b-4 border-green-400"/>
           <div className="absolute bottom-0 right-0 w-6 h-6 border-r-4 border-b-4 border-green-400"/>
 
-          {/* GOD MODE LASER */}
-          <div className="absolute w-full h-[2px] bg-green-400 animate-pulse top-1/2"/>
+          {/* REAL MOVING LASER */}
+          <div className="scan-laser" />
 
         </div>
 
       </div>
 
-      {/* status */}
+      {/* STATUS DISPLAY */}
       <div className="absolute bottom-16 left-0 right-0 text-center">
 
         <div className="inline-block px-6 py-3 bg-black/70 backdrop-blur rounded-full text-lg font-bold">
