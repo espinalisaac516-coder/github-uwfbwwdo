@@ -16,11 +16,20 @@ export default function Checkout() {
     setLoading(true);
 
     const { data:userData } = await supabase.auth.getUser();
-
     const user = userData?.user;
 
     if(!user){
       toast.error("Not logged in");
+      setLoading(false);
+      return;
+    }
+
+    // 🔥 IMPORTANT FIX
+    const dispensaryId = items[0]?.product?.dispensary_id;
+
+    if(!dispensaryId){
+      toast.error("Missing dispensary");
+      setLoading(false);
       return;
     }
 
@@ -28,14 +37,16 @@ export default function Checkout() {
       .from("orders")
       .insert({
         customer_id: user.id,
-        dispensary_id: items[0]?.dispensary_id,
+        dispensary_id: dispensaryId,
         items: items,
         total: total,
+        status: "pending"
       });
 
     if(error){
       toast.error("Order failed");
-      console.error(error);
+      console.error("Checkout error:", error);
+      setLoading(false);
       return;
     }
 
@@ -43,7 +54,8 @@ export default function Checkout() {
 
     clearCart();
 
-    navigate("/orders");
+    // 🔥 navigate to confirmation page later
+    navigate("/");
 
     setLoading(false);
   };
@@ -56,9 +68,9 @@ export default function Checkout() {
       </h1>
 
       {items.map(item => (
-        <div key={item.id} className="flex justify-between py-2 border-b">
-          <span>{item.name}</span>
-          <span>${item.price}</span>
+        <div key={item.product.id} className="flex justify-between py-2 border-b">
+          <span>{item.product.name}</span>
+          <span>${item.product.price}</span>
         </div>
       ))}
 
