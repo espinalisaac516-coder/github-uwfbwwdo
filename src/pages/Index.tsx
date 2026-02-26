@@ -74,69 +74,104 @@ export default function Index() {
 
       <main className="flex-grow pt-16">
 
-        {/* GOD MODE HERO */}
-        <section className="relative pt-24 pb-20 md:pt-36 md:pb-28 px-6 overflow-hidden">
+        {/* GOD MODE HERO — OPTIMIZED MOBILE VERSION */}
 
-          {/* glow background */}
-          <div className="absolute inset-0 pointer-events-none">
-            <div className="absolute left-1/2 top-20 -translate-x-1/2 w-[700px] h-[700px] bg-emerald-400/20 blur-[120px] rounded-full"/>
-          </div>
+<section className="relative pt-24 pb-20 md:pt-36 md:pb-28 px-6 overflow-hidden">
 
-          <div className="container mx-auto relative z-10">
+{/* Glow Background — optimized */}
+<div className="absolute inset-0 pointer-events-none">
+<div className="absolute left-1/2 top-20 -translate-x-1/2 w-[500px] md:w-[700px] h-[500px] md:h-[700px] bg-emerald-400/20 blur-[80px] md:blur-[120px] rounded-full will-change-transform"/>
+</div>
 
-            <motion.h1
-              initial={{opacity:0,y:40}}
-              animate={{opacity:1,y:0}}
-              transition={{duration:0.7}}
-              className="text-6xl md:text-8xl font-black tracking-tighter text-[#0F172A]"
-            >
-              Delivery,
-            </motion.h1>
+<div className="container mx-auto relative z-10">
 
-            <motion.h2
-              initial={{opacity:0,y:60}}
-              animate={{opacity:1,y:0}}
-              transition={{delay:0.2,duration:0.8}}
-              className="relative text-[2.6rem] sm:text-6xl md:text-8xl font-bold italic font-serif"
-            >
-              <span className="hero-gradient-text relative z-10">
-                Elevated.
-              </span>
-              <span className="absolute inset-0 blur-3xl opacity-50 hero-gradient-text"/>
-            </motion.h2>
+{/* Delivery */}
+<motion.h1
+initial={{ opacity: 0, y: 30 }}
+animate={{ opacity: 1, y: 0 }}
+transition={{ duration: 0.5 }}
+className="text-6xl md:text-8xl font-black tracking-tighter text-[#0F172A]"
+>
+Delivery,
+</motion.h1>
 
-            <motion.p
-              initial={{opacity:0}}
-              animate={{opacity:1}}
-              transition={{delay:0.4}}
-              className="mt-6 max-w-xl text-slate-500 font-medium text-lg"
-            >
-              Licensed NJ cannabis delivery from Plainfield’s verified dispensary network.
-            </motion.p>
+{/* Elevated */}
+<motion.h2
+initial={{ opacity: 0, y: 40 }}
+animate={{ opacity: 1, y: 0 }}
+transition={{ delay: 0.15, duration: 0.5 }}
+className="relative text-[2.6rem] sm:text-6xl md:text-8xl font-bold italic font-serif"
+>
+<span className="hero-gradient-text relative z-10">
+Elevated.
+</span>
 
-            <motion.div
-              initial={{opacity:0,y:20}}
-              animate={{opacity:1,y:0}}
-              transition={{delay:0.6}}
-              className="flex flex-col md:flex-row gap-8 mt-12"
-            >
-              <button 
-                onClick={() => document.getElementById('dispensaries')?.scrollIntoView({behavior:'smooth'})}
-                className="px-10 py-5 bg-[#0F172A] text-white rounded-2xl font-bold flex items-center gap-3 shadow-2xl"
-              >
-                Order Now <ArrowRight className="h-6 w-6 text-[#10B981]" />
-              </button>
+{/* Glow overlay */}
+<span className="absolute inset-0 blur-2xl opacity-40 hero-gradient-text"/>
+</motion.h2>
 
-              <div className="border-l-2 border-[#10B981]/30 pl-6">
-                <p className="text-slate-500 font-bold text-[10px] uppercase tracking-[0.2em]">
-                  NJ-CRC COMPLIANT <br/>
-                  <span className="text-[#10B981] font-extrabold">PLAINFIELD NETWORK</span>
-                </p>
-              </div>
-            </motion.div>
+{/* Subtitle */}
+<motion.p
+initial={{ opacity: 0 }}
+animate={{ opacity: 1 }}
+transition={{ delay: 0.25 }}
+className="mt-6 max-w-xl text-slate-500 font-medium text-lg"
+>
+Compare Plainfield dispensaries. Find the best deals.
+Prepare for delivery launch.
+</motion.p>
 
-          </div>
-        </section>
+{/* Tags */}
+<div className="flex flex-wrap gap-3 mt-6">
+<span className="px-4 py-2 rounded-full bg-emerald-50 text-emerald-700 text-sm font-semibold">Licensed NJ Retailers</span>
+<span className="px-4 py-2 rounded-full bg-emerald-50 text-emerald-700 text-sm font-semibold">Real-Time Menu Updates</span>
+<span className="px-4 py-2 rounded-full bg-emerald-50 text-emerald-700 text-sm font-semibold">Delivery Coming Soon</span>
+<span className="px-4 py-2 rounded-full bg-emerald-50 text-emerald-700 text-sm font-semibold">Plainfield, NJ</span>
+</div>
+
+{/* Search + CTA */}
+<motion.div
+initial={{ opacity: 0, y: 15 }}
+animate={{ opacity: 1, y: 0 }}
+transition={{ delay: 0.35 }}
+className="flex flex-col md:flex-row gap-4 mt-10 max-w-2xl"
+>
+<input
+placeholder="Search products, dispensaries..."
+className="flex-1 px-6 py-4 rounded-xl border border-slate-200 focus:outline-none"
+/>
+
+<button
+onClick={() => document.getElementById('dispensaries')?.scrollIntoView({ behavior:'smooth' })}
+className="px-10 py-4 bg-[#0F172A] text-white rounded-xl font-bold shadow-lg"
+>
+Browse Menus →
+</button>
+</motion.div>
+
+{/* Early Access */}
+<div className="mt-10">
+<p className="text-sm font-semibold text-slate-600 mb-3">
+Delivery Launching Soon in Plainfield
+</p>
+
+<div className="flex gap-3 max-w-md">
+<input
+placeholder="Enter your email"
+className="flex-1 px-4 py-3 rounded-xl border border-slate-200"
+/>
+<button className="px-6 py-3 bg-emerald-500 text-white rounded-xl font-semibold">
+Join Early Access
+</button>
+</div>
+
+<p className="text-xs text-slate-400 mt-2">
+Be the first to order when we go live.
+</p>
+</div>
+
+</div>
+</section>
 
         {/* VALUE PROPS */}
         <section className="py-20 px-6 border-y border-slate-100 bg-white/50">
