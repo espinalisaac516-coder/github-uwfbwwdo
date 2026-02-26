@@ -209,11 +209,9 @@ Compare Plainfield dispensaries. Find the best deals. Prepare for delivery launc
 
 {trendingDeals.map((deal, index) => (
 
-<motion.div
+<div
 key={deal.id}
-initial={{ opacity: 0, y: 20 }}
-animate={{ opacity: 1, y: 0 }}
-transition={{ delay: index * 0.1 }}
+
 className="flex justify-between items-center p-4 rounded-xl border border-slate-100 hover:border-[#10B981]/40 transition-all"
 >
 
@@ -237,7 +235,7 @@ ${deal.price}
 </p>
 </div>
 
-</motion.div>
+</div>
 
 ))}
 
