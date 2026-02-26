@@ -261,7 +261,7 @@ className="w-full md:w-[420px] px-6 py-4 rounded-xl border border-slate-200"
 onClick={()=>document.getElementById('dispensaries')?.scrollIntoView({behavior:'smooth'})}
 className="px-8 py-4 bg-[#0F172A] text-white rounded-2xl font-bold flex items-center gap-3 shadow-xl"
 >
-Browse Menus <ArrowRight className="h-5 w-5 text-[#10B981]"/>
+Compare Deals <ArrowRight className="h-5 w-5 text-[#10B981]"/>
 </button>
 
 </div>
