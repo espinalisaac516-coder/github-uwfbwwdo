@@ -18,6 +18,7 @@ const [driverModalOpen,setDriverModalOpen] = useState(false);
 
 const [searchQuery,setSearchQuery] = useState("");
 const [earlyAccessEmail,setEarlyAccessEmail] = useState("");
+const [trendingDeals,setTrendingDeals] = useState<any[]>([])
 
 const [driverName,setDriverName] = useState("");
 const [driverEmail,setDriverEmail] = useState("");
@@ -41,6 +42,25 @@ setLoading(false);
 fetchDispensaries();
 
 },[]);
+
+useEffect(() => {
+
+  const fetchTrending = async () => {
+  
+  const { data } = await supabase
+  .from('aggregated_deals')
+  .select('*')
+  .or('is_price_drop.eq.true,is_new.eq.true')
+  .order('created_at',{ascending:false})
+  .limit(3);
+  
+  if(data) setTrendingDeals(data);
+  
+  };
+  
+  fetchTrending();
+  
+  },[]);
 
 
 // DELIVERY EARLY ACCESS
@@ -174,6 +194,44 @@ Compare Plainfield dispensaries. Find the best deals. Prepare for delivery launc
 <span>Delivery Coming Soon</span>
 <span>Plainfield, NJ</span>
 </div>
+
+{/* LIVE TRENDING SECTION */}
+
+{trendingDeals.length > 0 && (
+
+<div className="mt-8 bg-black text-white rounded-2xl px-6 py-5 shadow-xl">
+
+<p className="text-xs uppercase tracking-widest text-emerald-400 mb-3">
+🔥 Trending in Plainfield
+</p>
+
+<div className="space-y-3 text-sm">
+
+{trendingDeals.map((deal)=>(
+<div key={deal.id} className="flex justify-between items-center">
+
+<div>
+<p className="font-semibold">
+{deal.dispensary_name}
+</p>
+<p className="text-slate-400 text-xs">
+{deal.product_name}
+</p>
+</div>
+
+<p className="text-emerald-400 font-bold">
+${deal.price}
+</p>
+
+</div>
+))}
+
+</div>
+
+</div>
+
+)}
+
 
 <div className="mt-8 flex flex-col md:flex-row gap-4">
 
