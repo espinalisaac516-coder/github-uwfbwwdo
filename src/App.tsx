@@ -37,8 +37,8 @@ const App = () => (
           <BrowserRouter>
 
             {/* Global Cart */}
-            {APP_MODE.deliveryEnabled && <CartDrawer />}
-            <FloatingCart />
+{APP_MODE.deliveryEnabled && <CartDrawer />}
+{APP_MODE.deliveryEnabled && <FloatingCart />}
 
             <Routes>
 
