@@ -14,6 +14,9 @@ const [dispensaries, setDispensaries] = useState<DbDispensary[]>([]);
 const [loading, setLoading] = useState(true);
 const [driverModalOpen, setDriverModalOpen] = useState(false);
 
+/* ✅ NEW — delivery waitlist email state */
+const [email,setEmail] = useState("");
+
 const navigate = useNavigate();
 
 useEffect(() => {
@@ -29,6 +32,28 @@ setLoading(false);
 
 fetchDispensaries();
 }, []);
+
+/* ✅ NEW — real early access submit */
+const joinEarlyAccess = async () => {
+
+if(!email){
+alert("Enter email first");
+return;
+}
+
+const { error } = await supabase
+.from("delivery_waitlist")
+.insert([{ email }]);
+
+if(error){
+console.log(error);
+alert("Something went wrong");
+return;
+}
+
+alert("You're on the early access list 🔥");
+setEmail("");
+};
 
 return (
 <div className="min-h-screen bg-abstract flex flex-col font-sans overflow-x-hidden">
@@ -74,7 +99,6 @@ Sign In
 {/* GOD MODE HERO */}
 <section className="relative pt-24 pb-20 md:pt-36 md:pb-28 px-6 overflow-hidden">
 
-{/* smooth animated glow */}
 <div className="absolute inset-0 pointer-events-none">
 <motion.div
 animate={{ scale:[1,1.05,1] }}
@@ -85,20 +109,13 @@ className="absolute left-1/2 top-20 -translate-x-1/2 w-[700px] h-[700px] bg-emer
 
 <div className="container mx-auto relative z-10">
 
-<motion.h1
-initial={{opacity:0,y:20}}
-animate={{opacity:1,y:0}}
-className="text-6xl md:text-8xl font-black tracking-tighter text-[#0F172A]"
->
+<motion.h1 initial={{opacity:0,y:20}} animate={{opacity:1,y:0}}
+className="text-6xl md:text-8xl font-black tracking-tighter text-[#0F172A]">
 Delivery,
 </motion.h1>
 
-<motion.h2
-initial={{opacity:0,y:20}}
-animate={{opacity:1,y:0}}
-transition={{delay:.2}}
-className="relative text-[2.6rem] sm:text-6xl md:text-8xl font-bold italic font-serif"
->
+<motion.h2 initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} transition={{delay:.2}}
+className="relative text-[2.6rem] sm:text-6xl md:text-8xl font-bold italic font-serif">
 <span className="hero-gradient-text relative z-10">
 Elevated.
 </span>
@@ -109,7 +126,6 @@ Elevated.
 Compare Plainfield dispensaries. Find the best deals. Prepare for delivery launch.
 </p>
 
-{/* TAGS */}
 <div className="flex flex-wrap gap-3 mt-6 text-sm text-slate-500">
 <span>Licensed NJ Retailers</span>
 <span>Real-Time Menu Updates</span>
@@ -134,20 +150,28 @@ Browse Menus <ArrowRight className="h-5 w-5 text-[#10B981]" />
 
 </div>
 
-{/* DELIVERY EARLY ACCESS BELOW SEARCH */}
+{/* ✅ WORKING DELIVERY EARLY ACCESS */}
 <div className="mt-6">
 <p className="text-sm font-semibold text-slate-600 mb-2">
 Delivery Launching Soon in Plainfield
 </p>
 
 <div className="flex flex-col md:flex-row gap-3">
+
 <input
+value={email}
+onChange={(e)=>setEmail(e.target.value)}
 placeholder="Enter your email"
 className="px-6 py-4 rounded-xl border border-slate-200 w-full md:w-[300px]"
 />
-<button className="px-6 py-4 bg-[#10B981] text-white font-bold rounded-xl">
+
+<button
+onClick={joinEarlyAccess}
+className="px-6 py-4 bg-[#10B981] text-white font-bold rounded-xl"
+>
 Join Early Access
 </button>
+
 </div>
 
 <p className="text-xs text-slate-400 mt-2">
@@ -157,78 +181,3 @@ Be the first to order when we go live.
 
 </div>
 </section>
-
-{/* VALUE PROPS */}
-<section className="py-20 px-6 border-y border-slate-100 bg-white/50">
-<div className="container mx-auto grid md:grid-cols-3 gap-16">
-<Value icon={<Zap className="text-[#10B981]" />} title="Fast Pickup" desc="Quickest verified dispensary pickups." />
-<Value icon={<ShieldCheck className="text-[#10B981]" />} title="Verified Legal" desc="NJ licensed retailers only." />
-<Value icon={<Navigation className="text-[#10B981]" />} title="Live Tracking" desc="Delivery tracking coming soon." />
-</div>
-</section>
-
-{/* DISPENSARIES */}
-<section id="dispensaries" className="py-24 px-6 bg-white">
-<div className="container mx-auto">
-<h2 className="text-3xl font-black text-[#0F172A] mb-12 uppercase">
-Nearby Dispensaries
-</h2>
-
-<div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-{!loading && dispensaries.map((d,i)=>(
-<DispensaryCard key={d.id} dispensary={d} index={i}/>
-))}
-</div>
-</div>
-</section>
-
-</main>
-
-{/* DRIVER EARLY ACCESS MODAL */}
-{driverModalOpen && (
-<div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 px-4">
-
-<div className="bg-white rounded-2xl p-8 w-full max-w-md relative shadow-xl">
-
-<button
-onClick={()=>setDriverModalOpen(false)}
-className="absolute right-4 top-3 text-xl"
->
-✕
-</button>
-
-<h2 className="text-2xl font-black mb-2">
-Driver Platform Launching Soon
-</h2>
-
-<p className="text-slate-500 mb-6 text-sm">
-Join early to get priority access when BudRunner delivery launches.
-</p>
-
-<input placeholder="Full Name" className="w-full mb-3 px-4 py-3 border rounded-xl" />
-<input placeholder="Email Address" className="w-full mb-4 px-4 py-3 border rounded-xl" />
-
-<button className="w-full bg-[#10B981] text-white py-3 rounded-xl font-bold">
-Join Driver Waitlist
-</button>
-
-</div>
-
-</div>
-)}
-
-<Footer/>
-
-</div>
-);
-}
-
-function Value({icon,title,desc}:any){
-return(
-<div className="flex flex-col gap-4">
-{icon}
-<h3 className="text-xl font-black text-[#0F172A]">{title}</h3>
-<p className="text-slate-500 text-sm">{desc}</p>
-</div>
-)
-}
