@@ -35,9 +35,8 @@ export default function Checkout() {
 
       // 🔥 INSERT ORDER (RLS SAFE)
       const { data, error } = await supabase
-        .from("orders")
+        .from("orders" as any )
         .insert({
-          customer_id: user.id,
           user_id: user.id, // ✅ required for your table
           dispensary_id: items[0]?.dispensary_id,
           items: items,
