@@ -14,22 +14,21 @@ export default function Index() {
 const [dispensaries, setDispensaries] = useState<DbDispensary[]>([]);
 const [loading, setLoading] = useState(true);
 
-const [driverModalOpen, setDriverModalOpen] = useState(false);
+const [driverModalOpen,setDriverModalOpen] = useState(false);
 
-// ✅ SEPARATE STATES (FIXES MIRROR INPUT BUG)
 const [searchQuery,setSearchQuery] = useState("");
 const [earlyAccessEmail,setEarlyAccessEmail] = useState("");
 
 const navigate = useNavigate();
 
-useEffect(() => {
+useEffect(()=>{
 
 const fetchDispensaries = async () => {
 
 const { data } = await supabase
 .from('dispensaries')
 .select('*')
-.order('created_at',{ ascending:false });
+.order('created_at',{ascending:false});
 
 if(data) setDispensaries(data as DbDispensary[]);
 setLoading(false);
@@ -41,7 +40,7 @@ fetchDispensaries();
 },[]);
 
 
-// ✅ EARLY ACCESS FUNCTION
+// DELIVERY EARLY ACCESS
 const joinEarlyAccess = async () => {
 
 if(!earlyAccessEmail){
@@ -59,25 +58,21 @@ return;
 }
 
 toast.success("You're on the early access list!");
-
 setEarlyAccessEmail("");
 
 };
 
-return (
+return(
 
 <div className="min-h-screen bg-abstract flex flex-col font-sans overflow-x-hidden">
 
 {/* HEADER */}
-
 <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-slate-100">
 
 <div className="container mx-auto px-4 h-16 flex items-center justify-between">
 
 {/* ORIGINAL SVG LOGO */}
-
 <div className="flex items-center gap-2 cursor-pointer" onClick={()=>navigate('/')}>
-
 <div className="w-10 h-10 bg-[#10B981] rounded-full flex items-center justify-center shadow-sm">
 
 <svg viewBox="0 0 24 24" className="h-6 w-6 fill-white">
@@ -89,7 +84,6 @@ return (
 <span className="text-xl font-bold tracking-tight text-[#0F172A]">
 Bud<span className="text-[#10B981]">Runner</span>
 </span>
-
 </div>
 
 <div className="flex items-center gap-3">
@@ -114,34 +108,28 @@ Sign In
 
 <main className="flex-grow pt-16">
 
-{/* GOD MODE HERO */}
-
+{/* HERO */}
 <section className="relative pt-24 pb-20 md:pt-36 md:pb-28 px-6 overflow-hidden">
 
-{/* smooth animated glow */}
-
 <div className="absolute inset-0 pointer-events-none">
-
 <motion.div
 animate={{ scale:[1,1.05,1] }}
 transition={{ duration:8, repeat:Infinity }}
 className="absolute left-1/2 top-20 -translate-x-1/2 w-[700px] h-[700px] bg-emerald-400/20 blur-[120px] rounded-full"
 />
-
 </div>
 
 <div className="container mx-auto relative z-10">
 
-<motion.h1 initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} className="text-6xl md:text-8xl font-black tracking-tighter text-[#0F172A]">
+<motion.h1 initial={{opacity:0,y:20}} animate={{opacity:1,y:0}}
+className="text-6xl md:text-8xl font-black tracking-tighter text-[#0F172A]">
 Delivery,
 </motion.h1>
 
-<motion.h2 initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} transition={{delay:.2}} className="relative text-[2.6rem] sm:text-6xl md:text-8xl font-bold italic font-serif">
+<motion.h2 initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} transition={{delay:.2}}
+className="relative text-[2.6rem] sm:text-6xl md:text-8xl font-bold italic font-serif">
 
-<span className="hero-gradient-text relative z-10">
-Elevated.
-</span>
-
+<span className="hero-gradient-text relative z-10">Elevated.</span>
 <span className="absolute inset-0 blur-3xl opacity-50 hero-gradient-text"/>
 
 </motion.h2>
@@ -157,8 +145,7 @@ Compare Plainfield dispensaries. Find the best deals. Prepare for delivery launc
 <span>Plainfield, NJ</span>
 </div>
 
-{/* SEARCH + BROWSE */}
-
+{/* SEARCH */}
 <div className="mt-8 flex flex-col md:flex-row gap-4">
 
 <input
@@ -177,8 +164,7 @@ Browse Menus <ArrowRight className="h-5 w-5 text-[#10B981]"/>
 
 </div>
 
-{/* EARLY ACCESS */}
-
+{/* DELIVERY EARLY ACCESS */}
 <div className="mt-6">
 
 <p className="text-sm font-semibold text-slate-600 mb-2">
@@ -196,8 +182,7 @@ className="px-6 py-4 rounded-xl border border-slate-200 w-full md:w-[300px]"
 
 <button
 onClick={joinEarlyAccess}
-className="px-6 py-4 bg-[#10B981] text-white font-bold rounded-xl"
->
+className="px-6 py-4 bg-[#10B981] text-white font-bold rounded-xl">
 Join Early Access
 </button>
 
@@ -213,46 +198,60 @@ Be the first to order when we go live.
 </section>
 
 {/* VALUE PROPS */}
-
 <section className="py-20 px-6 border-y border-slate-100 bg-white/50">
-
 <div className="container mx-auto grid md:grid-cols-3 gap-16">
-
 <Value icon={<Zap className="text-[#10B981]"/>} title="Fast Pickup" desc="Quickest verified dispensary pickups."/>
-
 <Value icon={<ShieldCheck className="text-[#10B981]"/>} title="Verified Legal" desc="NJ licensed retailers only."/>
-
 <Value icon={<Navigation className="text-[#10B981]"/>} title="Live Tracking" desc="Delivery tracking coming soon."/>
-
 </div>
-
 </section>
 
 {/* DISPENSARIES */}
-
 <section id="dispensaries" className="py-24 px-6 bg-white">
-
 <div className="container mx-auto">
-
 <h2 className="text-3xl font-black text-[#0F172A] mb-12 uppercase">
 Nearby Dispensaries
 </h2>
 
 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
-
 {!loading && dispensaries.map((d,i)=>(
-
 <DispensaryCard key={d.id} dispensary={d} index={i}/>
-
 ))}
-
 </div>
-
 </div>
-
 </section>
 
 </main>
+
+{/* DRIVER MODAL */}
+{driverModalOpen && (
+<div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 px-4">
+
+<div className="bg-white rounded-2xl p-8 w-full max-w-md relative shadow-xl">
+
+<button onClick={()=>setDriverModalOpen(false)} className="absolute right-4 top-3 text-xl">
+✕
+</button>
+
+<h2 className="text-2xl font-black mb-2">
+Join the Founding BudRunner Driver Network
+</h2>
+
+<p className="text-slate-500 mb-6 text-sm">
+Get priority access when delivery launches in Plainfield.
+</p>
+
+<input placeholder="Full Name" className="w-full mb-3 px-4 py-3 border rounded-xl"/>
+<input placeholder="Email Address" className="w-full mb-4 px-4 py-3 border rounded-xl"/>
+
+<button className="w-full bg-[#10B981] text-white py-3 rounded-xl font-bold">
+Join Driver Waitlist
+</button>
+
+</div>
+
+</div>
+)}
 
 <Footer/>
 
