@@ -213,7 +213,7 @@ Compare Plainfield dispensaries. Find the best deals. Prepare for delivery launc
 <div
 key={deal.id}
 
-className="flex justify-between items-center p-4 rounded-xl border border-slate-100 hover:border-[#10B981]/40 transition-all"
+className="mt-8 bg-white/70 backdrop-blur-md border border-slate-200 rounded-2xl px-6 py-5 shadow-sm"
 >
 
 <div>
