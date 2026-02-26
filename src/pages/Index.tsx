@@ -19,7 +19,6 @@ const [driverModalOpen,setDriverModalOpen] = useState(false);
 const [searchQuery,setSearchQuery] = useState("");
 const [earlyAccessEmail,setEarlyAccessEmail] = useState("");
 
-// ✅ DRIVER FORM STATE
 const [driverName,setDriverName] = useState("");
 const [driverEmail,setDriverEmail] = useState("");
 
@@ -67,7 +66,7 @@ setEarlyAccessEmail("");
 };
 
 
-// ✅ DRIVER WAITLIST FUNCTION (THIS WAS MISSING)
+// DRIVER WAITLIST
 const joinDriverWaitlist = async () => {
 
 if(!driverName || !driverEmail){
@@ -105,7 +104,6 @@ return(
 
 <div className="container mx-auto px-4 h-16 flex items-center justify-between">
 
-{/* ORIGINAL SVG LOGO */}
 <div className="flex items-center gap-2 cursor-pointer" onClick={()=>navigate('/')}>
 <div className="w-10 h-10 bg-[#10B981] rounded-full flex items-center justify-center shadow-sm">
 
@@ -142,7 +140,7 @@ Sign In
 
 <main className="flex-grow pt-16">
 
-{/* HERO — YOUR ORIGINAL UI REMAINS EXACTLY SAME */}
+{/* HERO */}
 <section className="relative pt-24 pb-20 md:pt-36 md:pb-28 px-6 overflow-hidden">
 
 <div className="absolute inset-0 pointer-events-none">
@@ -162,10 +160,8 @@ Delivery,
 
 <motion.h2 initial={{opacity:0,y:20}} animate={{opacity:1,y:0}} transition={{delay:.2}}
 className="relative text-[2.6rem] sm:text-6xl md:text-8xl font-bold italic font-serif">
-
 <span className="hero-gradient-text relative z-10">Elevated.</span>
 <span className="absolute inset-0 blur-3xl opacity-50 hero-gradient-text"/>
-
 </motion.h2>
 
 <p className="mt-6 max-w-xl text-slate-500 font-medium text-lg">
@@ -179,7 +175,6 @@ Compare Plainfield dispensaries. Find the best deals. Prepare for delivery launc
 <span>Plainfield, NJ</span>
 </div>
 
-{/* SEARCH */}
 <div className="mt-8 flex flex-col md:flex-row gap-4">
 
 <input
@@ -198,9 +193,7 @@ Browse Menus <ArrowRight className="h-5 w-5 text-[#10B981]"/>
 
 </div>
 
-{/* DELIVERY EARLY ACCESS */}
 <div className="mt-6">
-
 <p className="text-sm font-semibold text-slate-600 mb-2">
 Delivery Launching Soon in Plainfield
 </p>
@@ -225,20 +218,39 @@ Join Early Access
 <p className="text-xs text-slate-400 mt-2">
 Be the first to order when we go live.
 </p>
-
 </div>
 
 </div>
 </section>
 
-</main>
+{/* VALUE PROPS */}
+<section className="py-20 px-6 border-y border-slate-100 bg-white/50">
+<div className="container mx-auto grid md:grid-cols-3 gap-16">
+<Value icon={<Zap className="text-[#10B981]"/>} title="Fast Pickup" desc="Quickest verified dispensary pickups."/>
+<Value icon={<ShieldCheck className="text-[#10B981]"/>} title="Verified Legal" desc="NJ licensed retailers only."/>
+<Value icon={<Navigation className="text-[#10B981]"/>} title="Live Tracking" desc="Delivery tracking coming soon."/>
+</div>
+</section>
 
+{/* DISPENSARIES */}
+<section id="dispensaries" className="py-24 px-6 bg-white">
+<div className="container mx-auto">
+<h2 className="text-3xl font-black text-[#0F172A] mb-12 uppercase">
+Nearby Dispensaries
+</h2>
+<div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+{!loading && dispensaries.map((d,i)=>(
+<DispensaryCard key={d.id} dispensary={d} index={i}/>
+))}
+</div>
+</div>
+</section>
+
+</main>
 
 {/* DRIVER MODAL */}
 {driverModalOpen && (
-
 <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 px-4">
-
 <div className="bg-white rounded-2xl p-8 w-full max-w-md relative shadow-xl">
 
 <button onClick={()=>setDriverModalOpen(false)} className="absolute right-4 top-3 text-xl">✕</button>
@@ -272,9 +284,7 @@ Join Driver Waitlist
 </button>
 
 </div>
-
 </div>
-
 )}
 
 <Footer/>
@@ -283,4 +293,14 @@ Join Driver Waitlist
 
 );
 
+}
+
+function Value({icon,title,desc}:any){
+return(
+<div className="flex flex-col gap-4">
+{icon}
+<h3 className="text-xl font-black text-[#0F172A]">{title}</h3>
+<p className="text-slate-500 text-sm">{desc}</p>
+</div>
+)
 }
