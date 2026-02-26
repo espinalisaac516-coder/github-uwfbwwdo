@@ -10,7 +10,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { CartProvider } from "@/lib/cart-context";
 
 import CartDrawer from "@/components/CartDrawer";
-import FloatingCart from "@/components/FloatingCart"; // 🔥 PRO CART BUTTON
+import FloatingCart from "@/components/FloatingCart"; // remove if not using
 
 // Pages
 import Index from "./pages/Index";
@@ -20,13 +20,15 @@ import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import DispensaryMenu from "./pages/DispensaryMenu";
 import Dispensaries from "./pages/Dispensaries";
+import Checkout from "./pages/Checkout"; // if you still use it
+import OrderConfirmation from "./pages/OrderConfirmation"; // 🔥 NEW
 
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
-      <CartProvider> {/* 🔥 REQUIRED FOR useCart */}
+      <CartProvider>
 
         <TooltipProvider>
           <Toaster />
@@ -34,10 +36,8 @@ const App = () => (
 
           <BrowserRouter>
 
-            {/* 🔥 GLOBAL CART DRAWER */}
+            {/* GLOBAL CART SYSTEM */}
             <CartDrawer />
-
-            {/* 🔥 FLOATING PRO CART BUTTON */}
             <FloatingCart />
 
             <Routes>
@@ -48,13 +48,13 @@ const App = () => (
               {/* ID Scanner */}
               <Route path="/id-scan" element={<IDScanner />} />
 
-              {/* Driver */}
+              {/* Driver Signup */}
               <Route path="/driver-signup" element={<DriverSignup />} />
 
               {/* Auth */}
               <Route path="/auth" element={<Auth />} />
 
-              {/* Protected Customer Area */}
+              {/* Customer Area */}
               <Route
                 path="/dispensaries"
                 element={
@@ -64,12 +64,31 @@ const App = () => (
                 }
               />
 
-              {/* Dispensary Menu */}
               <Route
                 path="/dispensary/:id"
                 element={
                   <ProtectedRoute allowedRole="customer">
                     <DispensaryMenu />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Checkout (optional if still used) */}
+              <Route
+                path="/checkout"
+                element={
+                  <ProtectedRoute allowedRole="customer">
+                    <Checkout />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* 🔥 ORDER CONFIRMATION PAGE */}
+              <Route
+                path="/order-confirmation/:id"
+                element={
+                  <ProtectedRoute allowedRole="customer">
+                    <OrderConfirmation />
                   </ProtectedRoute>
                 }
               />
