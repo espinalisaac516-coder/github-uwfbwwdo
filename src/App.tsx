@@ -21,7 +21,7 @@ import NotFound from "./pages/NotFound";
 import DispensaryMenu from "./pages/DispensaryMenu";
 import Dispensaries from "./pages/Dispensaries";
 import Checkout from "./pages/Checkout";
-import OrderConfirmed from "./pages/OrderConfirmed"; // ✅ CORRECT FILE NAME
+import OrderConfirmation from "./pages/OrderConfirmation"; // ✅ FIXED
 
 const queryClient = new QueryClient();
 
@@ -29,14 +29,13 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <CartProvider>
-
         <TooltipProvider>
           <Toaster />
           <Sonner />
 
           <BrowserRouter>
 
-            {/* 🔥 GLOBAL CART SYSTEM */}
+            {/* Global Cart */}
             <CartDrawer />
             <FloatingCart />
 
@@ -54,7 +53,7 @@ const App = () => (
               {/* Auth */}
               <Route path="/auth" element={<Auth />} />
 
-              {/* Customer Area */}
+              {/* Protected Customer Area */}
               <Route
                 path="/dispensaries"
                 element={
@@ -83,12 +82,12 @@ const App = () => (
                 }
               />
 
-              {/* ✅ ORDER CONFIRMATION PAGE */}
+              {/* Order Confirmation */}
               <Route
                 path="/order-confirmed/:id"
                 element={
                   <ProtectedRoute allowedRole="customer">
-                    <OrderConfirmed />
+                    <OrderConfirmation />
                   </ProtectedRoute>
                 }
               />
@@ -101,7 +100,6 @@ const App = () => (
           </BrowserRouter>
 
         </TooltipProvider>
-
       </CartProvider>
     </AuthProvider>
   </QueryClientProvider>
