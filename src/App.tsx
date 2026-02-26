@@ -20,8 +20,8 @@ import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import DispensaryMenu from "./pages/DispensaryMenu";
 import Dispensaries from "./pages/Dispensaries";
-import Checkout from "./pages/Checkout"; // if you still use it
-import OrderConfirmation from "./pages/OrderConfirmation"; // 🔥 NEW
+import Checkout from "./pages/Checkout";
+import OrderConfirmed from "./pages/OrderConfirmed"; // ✅ CORRECT FILE NAME
 
 const queryClient = new QueryClient();
 
@@ -36,7 +36,7 @@ const App = () => (
 
           <BrowserRouter>
 
-            {/* GLOBAL CART SYSTEM */}
+            {/* 🔥 GLOBAL CART SYSTEM */}
             <CartDrawer />
             <FloatingCart />
 
@@ -73,7 +73,7 @@ const App = () => (
                 }
               />
 
-              {/* Checkout (optional if still used) */}
+              {/* Checkout */}
               <Route
                 path="/checkout"
                 element={
@@ -83,12 +83,12 @@ const App = () => (
                 }
               />
 
-              {/* 🔥 ORDER CONFIRMATION PAGE */}
+              {/* ✅ ORDER CONFIRMATION PAGE */}
               <Route
-                path="/order-confirmation/:id"
+                path="/order-confirmed/:id"
                 element={
                   <ProtectedRoute allowedRole="customer">
-                    <OrderConfirmation />
+                    <OrderConfirmed />
                   </ProtectedRoute>
                 }
               />
