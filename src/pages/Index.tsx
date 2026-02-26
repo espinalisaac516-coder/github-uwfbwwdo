@@ -202,7 +202,7 @@ Compare Plainfield dispensaries. Find the best deals. Prepare for delivery launc
 <div className="mt-8 bg-black text-white rounded-2xl px-6 py-5 shadow-xl">
 
 <p className="text-xs uppercase tracking-widest text-emerald-400 mb-3">
-🔥 Trending in Plainfield
+🔥 Live Deals Near You - Updated Daily
 </p>
 
 <div className="space-y-3 text-sm">
