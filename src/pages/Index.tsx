@@ -199,7 +199,8 @@ Compare Plainfield dispensaries. Find the best deals. Prepare for delivery launc
 
 {trendingDeals.length > 0 && (
 
-<div className="mt-8 bg-black text-white rounded-2xl px-6 py-5 shadow-xl">
+<div className="mt-8 bg-white/70 backdrop-blur-md border border-slate-200 rounded-2xl px-6 py-5 shadow-sm"
+>
 
 <p className="text-xs uppercase tracking-widest text-emerald-400 mb-3">
 🔥 Live Deals Near You - Updated Daily
