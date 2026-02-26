@@ -9,55 +9,65 @@ export default function Checkout() {
   const { items, total, clearCart } = useCart();
   const navigate = useNavigate();
 
-  const [loading,setLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const placeOrder = async () => {
 
-    setLoading(true);
-
-    const { data:userData } = await supabase.auth.getUser();
-    const user = userData?.user;
-
-    if(!user){
-      toast.error("Not logged in");
-      setLoading(false);
+    if(items.length === 0){
+      toast.error("Cart is empty");
       return;
     }
 
-    // 🔥 IMPORTANT FIX
-    const dispensaryId = items[0]?.product?.dispensary_id;
+    try {
 
-    if(!dispensaryId){
-      toast.error("Missing dispensary");
+      setLoading(true);
+
+      // 🔥 Get logged in user
+      const { data: userData, error: userError } = await supabase.auth.getUser();
+
+      if(userError || !userData?.user){
+        toast.error("Not logged in");
+        setLoading(false);
+        return;
+      }
+
+      const user = userData.user;
+
+      // 🔥 INSERT ORDER (RLS SAFE)
+      const { data, error } = await supabase
+        .from("orders")
+        .insert({
+          customer_id: user.id,
+          user_id: user.id, // ✅ required for your table
+          dispensary_id: items[0]?.dispensary_id,
+          items: items,
+          total: total,
+          status: "pending"
+        })
+        .select()
+        .single();
+
+      if(error){
+        console.error("Checkout error:", error);
+        toast.error("Order failed");
+        setLoading(false);
+        return;
+      }
+
+      toast.success("Order placed!");
+
+      clearCart();
+
+      // ✅ Navigate to confirmation page
+      navigate(`/order-confirmed/${data.id}`);
+
+    } catch(err){
+      console.error(err);
+      toast.error("Something went wrong");
+    } finally {
       setLoading(false);
-      return;
     }
 
-    const { error } = await supabase
-      .from("orders")
-      .insert({
-        customer_id: user.id,
-        dispensary_id: dispensaryId,
-        items: items,
-        total: total,
-        status: "pending"
-      });
-
-    if(error){
-      toast.error("Order failed");
-      console.error("Checkout error:", error);
-      setLoading(false);
-      return;
-    }
-
-    toast.success("Order placed!");
-
-    clearCart();
-
-    // 🔥 navigate to confirmation page later
-    navigate("/");
-
-    setLoading(false);
   };
 
   return (
@@ -67,17 +77,20 @@ export default function Checkout() {
         Checkout
       </h1>
 
-      {items.map(item => (
-        <div key={item.product.id} className="flex justify-between py-2 border-b">
-          <span>{item.product.name}</span>
-          <span>${item.product.price}</span>
+      {/* CART ITEMS */}
+      {items.map((item, index) => (
+        <div key={index} className="flex justify-between py-2 border-b">
+          <span>{item.product?.name}</span>
+          <span>${item.product?.price}</span>
         </div>
       ))}
 
+      {/* TOTAL */}
       <div className="mt-6 text-xl font-bold">
-        Total: ${total}
+        Total: ${total.toFixed(2)}
       </div>
 
+      {/* PLACE ORDER BUTTON */}
       <button
         onClick={placeOrder}
         disabled={loading}
