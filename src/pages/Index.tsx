@@ -207,23 +207,38 @@ Compare Plainfield dispensaries. Find the best deals. Prepare for delivery launc
 
 <div className="space-y-3 text-sm">
 
-{trendingDeals.map((deal)=>(
-<div key={deal.id} className="flex justify-between items-center">
+{trendingDeals.map((deal, index) => (
+
+<motion.div
+key={deal.id}
+initial={{ opacity: 0, y: 20 }}
+animate={{ opacity: 1, y: 0 }}
+transition={{ delay: index * 0.1 }}
+className="flex justify-between items-center p-4 rounded-xl border border-slate-100 hover:border-[#10B981]/40 transition-all"
+>
 
 <div>
 <p className="font-semibold">
-{deal.dispensary_name}
+🔥 {deal.dispensary_name}
 </p>
-<p className="text-slate-400 text-xs">
+
+<p className="text-sm text-slate-500">
 {deal.product_name}
 </p>
 </div>
 
-<p className="text-emerald-400 font-bold">
+<div className="text-right">
+<p className="text-[#10B981] font-bold">
 ${deal.price}
 </p>
 
+<p className="text-xs text-slate-400">
+{deal.label}
+</p>
 </div>
+
+</motion.div>
+
 ))}
 
 </div>
