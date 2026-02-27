@@ -237,7 +237,7 @@ Compare Plainfield dispensaries. Find the best deals. Prepare for delivery launc
 🔥 Today’s Best Prices in Plainfield
 </p>
 <span className="text-xs text-slate-500">
-Updated Daily
+Updated Weekly
 </span>
 </div>
 
