@@ -68,12 +68,14 @@ export default function Index() {
               <ShoppingBag className="h-5 w-5 text-slate-600" />
             </button>
 
+            {/*
             <button 
               onClick={() => navigate('/auth')} 
               className="px-5 py-2 bg-[#0F172A] text-white text-sm font-bold rounded-full hover:bg-black transition-all shadow-md"
             >
               Sign In
             </button>
+            */}
           </div>
         </div>
       </nav>
