@@ -229,47 +229,122 @@ Compare Plainfield dispensaries. Find the best deals. Prepare for delivery launc
 
 {/* LIVE TRENDING SECTION */}
 
-{trendingDeals.length > 0 && (
-<section className="mt-8 bg-white/70 backdrop-blur-md border border-slate-200 rounded-2xl px-6 py-6 shadow-sm">
+{/* Today's Best Prices in Plainfield */}
+<section className="mt-10 bg-white/60 backdrop-blur-md border border-slate-200 rounded-2xl px-6 py-8 shadow-sm">
 
-<div className="flex items-center justify-between mb-4">
-<p className="text-xs uppercase tracking-widest text-emerald-400">
-🔥 Live Deals Near You
+<div className="flex items-center justify-between mb-6">
+<p className="text-xs uppercase tracking-widest text-emerald-500 font-semibold">
+🔥 Today’s Best Prices in Plainfield
 </p>
 <span className="text-xs text-slate-500">
 Updated Daily
 </span>
 </div>
 
-<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-{trendingDeals.map((deal) => (
-<div
-key={deal.id}
-className="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-md transition"
->
-<p className="font-semibold text-sm">
-🏪 {deal.dispensary_name}
+<div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+{/* FLOWER WINNER */}
+<div className="bg-white border border-slate-200 rounded-2xl p-6 hover:shadow-md transition-all duration-300">
+
+<p className="text-xs uppercase tracking-widest text-slate-400 mb-2">
+Flower
 </p>
 
-<p className="text-sm text-slate-600 mt-1">
-{deal.product_name}
+<p className="text-lg font-semibold text-[#0F172A]">
+GMO x Root Beer – 3.5g
 </p>
 
-<div className="flex justify-between items-center mt-3">
-<p className="text-[#10B981] font-bold">
-${deal.price}
+<p className="text-sm text-slate-500 mt-1">
+Plant Base
 </p>
 
-<span className="text-xs bg-emerald-100 text-emerald-600 px-2 py-1 rounded-full">
-{deal.label}
+<div className="flex items-center justify-between mt-4">
+<div>
+<p className="text-sm line-through text-slate-400">
+$45
+</p>
+<p className="text-2xl font-black text-[#10B981]">
+$20
+</p>
+</div>
+
+<span className="text-[10px] uppercase bg-emerald-100 text-emerald-600 px-3 py-1 rounded-full font-semibold tracking-wider">
+Best Price Today
 </span>
 </div>
+
 </div>
-))}
+
+
+{/* VAPE WINNER */}
+<div className="bg-white border border-slate-200 rounded-2xl p-6 hover:shadow-md transition-all duration-300">
+
+<p className="text-xs uppercase tracking-widest text-slate-400 mb-2">
+Vape
+</p>
+
+<p className="text-lg font-semibold text-[#0F172A]">
+Rove Orange Crush – 1g
+</p>
+
+<p className="text-sm text-slate-500 mt-1">
+Queen City
+</p>
+
+<div className="flex items-center justify-between mt-4">
+<div>
+<p className="text-sm line-through text-slate-400">
+$84
+</p>
+<p className="text-2xl font-black text-[#10B981]">
+$71.40
+</p>
+</div>
+
+<span className="text-[10px] uppercase bg-emerald-100 text-emerald-600 px-3 py-1 rounded-full font-semibold tracking-wider">
+Best Price Today
+</span>
+</div>
+
+</div>
+
+
+{/* EDIBLE WINNER */}
+<div className="bg-white border border-slate-200 rounded-2xl p-6 hover:shadow-md transition-all duration-300">
+
+<p className="text-xs uppercase tracking-widest text-slate-400 mb-2">
+Edible
+</p>
+
+<p className="text-lg font-semibold text-[#0F172A]">
+GRON Mega Gummies – 10pk
+</p>
+
+<p className="text-sm text-slate-500 mt-1">
+Plant Base
+</p>
+
+<div className="flex items-center justify-between mt-4">
+<div>
+<p className="text-sm line-through text-slate-400">
+$16
+</p>
+<p className="text-2xl font-black text-[#10B981]">
+$12
+</p>
+</div>
+
+<span className="text-[10px] uppercase bg-emerald-100 text-emerald-600 px-3 py-1 rounded-full font-semibold tracking-wider">
+Best Price Today
+</span>
+</div>
+
+</div>
+
 </div>
 
 </section>
-)}
+
 
 
 
