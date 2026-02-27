@@ -18,42 +18,10 @@ const [driverModalOpen,setDriverModalOpen] = useState(false);
 
 const [searchQuery,setSearchQuery] = useState("");
 const [earlyAccessEmail,setEarlyAccessEmail] = useState("");
+const [trendingDeals,setTrendingDeals] = useState<any[]>([])
 
 const [driverName,setDriverName] = useState("");
 const [driverEmail,setDriverEmail] = useState("");
-
-type Deal = {
-  id: number;
-  dispensary_name: string;
-  product_name: string;
-  price: number;
-  label: string;
-  };
-  
-  const [trendingDeals, setTrendingDeals] = useState<Deal[]>([
-  {
-  id: 1,
-  dispensary_name: "Queen City",
-  product_name: "Chem Scout 3.5g",
-  price: 42,
-  label: "30% OFF"
-  },
-  {
-  id: 2,
-  dispensary_name: "Plant Base",
-  product_name: "Girl Scout Cookie 3.5g",
-  price: 38.5,
-  label: "$21.50 OFF"
-  },
-  {
-  id: 3,
-  dispensary_name: "MindLift",
-  product_name: "Mandarin ZKZ 3.5g",
-  price: 32.08,
-  label: "20% OFF"
-  }
-  ]);
-  
 
 const navigate = useNavigate();
 
@@ -230,47 +198,54 @@ Compare Plainfield dispensaries. Find the best deals. Prepare for delivery launc
 {/* LIVE TRENDING SECTION */}
 
 {trendingDeals.length > 0 && (
-<section className="mt-8 bg-white/70 backdrop-blur-md border border-slate-200 rounded-2xl px-6 py-6 shadow-sm">
 
-<div className="flex items-center justify-between mb-4">
-<p className="text-xs uppercase tracking-widest text-emerald-400">
-🔥 Live Deals Near You
+<div className="mt-8 bg-white/70 backdrop-blur-md border border-slate-200 rounded-2xl px-6 py-5 shadow-sm"
+>
+
+<p className="text-xs uppercase tracking-widest text-emerald-400 mb-3">
+🔥 Live Deals Near You - Updated Daily
 </p>
-<span className="text-xs text-slate-500">
-Updated Daily
-</span>
-</div>
 
-<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-{trendingDeals.map((deal) => (
+<div className="space-y-3 text-sm">
+
+{trendingDeals.map((deal, index) => (
+
 <div
 key={deal.id}
-className="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-md transition"
+
+className="flex justify-between items-center p-4 rounded-xl bg-white border border-slate-100 hover:border-[#10B981]/40 hover:shadow-md transition-all duration-300"
+
 >
-<p className="font-semibold text-sm">
-🏪 {deal.dispensary_name}
+
+<div>
+<p className="font-semibold">
+🔥 {deal.dispensary_name}
 </p>
 
-<p className="text-sm text-slate-600 mt-1">
+<p className="text-sm text-slate-500">
 {deal.product_name}
 </p>
+</div>
 
-<div className="flex justify-between items-center mt-3">
+<div className="text-right">
 <p className="text-[#10B981] font-bold">
 ${deal.price}
 </p>
 
-<span className="text-xs bg-emerald-100 text-emerald-600 px-2 py-1 rounded-full">
+<p className="text-xs text-slate-400">
 {deal.label}
-</span>
+</p>
 </div>
+
 </div>
+
 ))}
+
 </div>
 
-</section>
-)}
+</div>
 
+)}
 
 
 <div className="mt-8 flex flex-col md:flex-row gap-4">
