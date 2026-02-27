@@ -179,12 +179,14 @@ className="hidden sm:flex items-center gap-2 px-5 py-2 bg-[#10B981] text-white t
 <Truck className="h-3.5 w-3.5"/> Driver Early Access
 </button>
 
+{/*}
 <button
 onClick={()=>navigate('/auth')}
 className="px-5 py-2 bg-[#0F172A] text-white text-sm font-bold rounded-full"
 >
 Sign In
 </button>
+*/}
 
 </div>
 </div>
